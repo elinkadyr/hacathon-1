@@ -12,3 +12,4 @@ urlpatterns = [
     path("", include(router.urls)),
     path("rating/", AddRatingAPIView.as_view()),
 ]
+#wqe
