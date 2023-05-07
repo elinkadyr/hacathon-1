@@ -7,7 +7,6 @@ router.register('Artist', ArtistViewSet)
 router.register('Song', SongViewSet)
 
 
-
 urlpatterns = [
     path('', include(router.urls)),
     path('genre/', GenreListCreateAPIView.as_view()),
