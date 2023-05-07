@@ -2,11 +2,8 @@ from django.db import models
 from account.models import User
 from music.models import Song
 
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
-    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='likes')
-    is_fav = models.BooleanField(default=False)
 
+"""ТАБЛИЦА ДЛЯ КОММЕНТАРИЕВ"""
 class Comment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comments')
     song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='comments')
@@ -14,6 +11,20 @@ class Comment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
+"""ТАБЛИЦА ДЛЯ ЛАЙКОВ"""
+class Like(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='likes')
+    is_fav = models.BooleanField(default=False)
+
+
+"""ТАБЛИЦА ДЛЯ ИЗБРАННОГО"""
+class Favorite(models.Model):
+    ...
+
+
+"""ТАБЛИЦА ДЛЯ РЕЙТИНГА"""
 class Rating(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings')
     songs = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='ratings')
