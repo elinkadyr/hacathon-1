@@ -21,8 +21,8 @@ from drf_yasg.views import get_schema_view
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Python 27 API",
-        description="makers bootcamp",
+        title="Hacathon",
+        description="Elina Bektur Nasyikat Bebol",
         default_version="v1",
     ),
     public=True
@@ -34,4 +34,6 @@ urlpatterns = [
     path('api/v1/account/', include('account.urls')),
     path('api/v1/', include("music.urls")),
     path('api/v1/', include("review.urls")),
+    path('api/v1/', include("chat.urls")),
+    path('api/v1/', include("payment.urls")),
 ]

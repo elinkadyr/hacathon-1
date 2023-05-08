@@ -1,15 +1,15 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import CommentViewSet, LikeViewSet, AddRatingAPIView
+from .views import CommentViewSet, LikeViewSet, AddFavoriteView, LikeBasedRatingAPIView
 
 
 router = DefaultRouter()
 router.register("comments", CommentViewSet)
-router.register("favorites", LikeViewSet)
+router.register("likes", LikeViewSet)
 
 
 urlpatterns = [
     path("", include(router.urls)),
-    path("rating/", AddRatingAPIView.as_view()),
+    path("user-favorite/", AddFavoriteView.as_view()),
+    path("rating/", LikeBasedRatingAPIView.as_view()),
 ]
-#wqe

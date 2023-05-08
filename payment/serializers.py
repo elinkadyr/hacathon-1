@@ -4,9 +4,14 @@ from .models import Plan, Subscription
 class PlanSerializer(serializers.ModelSerializer):
     class Meta:
         model = Plan
-        fields = ('id', 'name', 'price')
+        fields =  '__all__'
+
+    def to_representation(self, instance: Plan):
+        rep = super().to_representation(instance)
+        rep["plan"] = {"id": instance.plan.id, "name": instance.plan.name}
+        return rep
 
 class SubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscription
-        fields = ('id', 'user', 'plan', 'start_date', 'end_date')
+        fields = '__all__'

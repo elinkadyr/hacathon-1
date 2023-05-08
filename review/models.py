@@ -1,7 +1,11 @@
 from django.db import models
+from django.db.models import Sum
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.utils import timezone
+
 from account.models import User
 from music.models import Song
-
 
 """ТАБЛИЦА ДЛЯ КОММЕНТАРИЕВ"""
 class Comment(models.Model):
@@ -15,17 +19,30 @@ class Comment(models.Model):
 """ТАБЛИЦА ДЛЯ ЛАЙКОВ"""
 class Like(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
-    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='likes')
-    is_fav = models.BooleanField(default=False)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='likes') 
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        unique_together = ['user', 'song']
 
 
 """ТАБЛИЦА ДЛЯ ИЗБРАННОГО"""
 class Favorite(models.Model):
-    ...
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favorites')
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
+from review.models import Like
+
+
+@receiver(post_save, sender=Like)
+def add_to_favorites(sender, instance, created, **kwargs):
+    if created:
+        # проверяем, есть ли песня в избранном у пользователя
+        favorite, created = Favorite.objects.get_or_create(user=instance.user, song=instance.song)
+        if created:
+            favorite.save()
 
 
 """ТАБЛИЦА ДЛЯ РЕЙТИНГА"""
 class Rating(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='ratings')
-    songs = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='ratings')
-    value = models.IntegerField(choices=[(1, 1),(2, 2),(3, 3),(4, 4),(5, 5)])
+    song = models.ForeignKey(Song, on_delete=models.CASCADE, related_name='ratings')
+    likes = models.PositiveIntegerField(default=0)

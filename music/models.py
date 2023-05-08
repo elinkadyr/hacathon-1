@@ -1,6 +1,6 @@
 from django.db import models
-from account.models import User
 
+from account.models import User  
 
 """ТАБЛИЦА ДЛЯ ЖАНРОВ"""
 class Genre(models.Model):
@@ -20,13 +20,14 @@ class Song(models.Model):
     title = models.CharField(max_length=200)
     release = models.DateField()
     duration = models.DurationField()
+    
 
+"""ТАБЛИЦА ДЛЯ ИСПОЛНИТЕЛЕЙ"""
+class Playlist(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    playlist_name = models.CharField(max_length=200)
+    song = models.ForeignKey(Song, on_delete=models.CASCADE)
 
-# """ТАБЛИЦА ДЛЯ ИСПОЛНИТЕЛЕЙ"""
-# class Playlist(models.Model):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE)
-#     playlist_name = models.CharField(max_length=200)
-#     song = models.ForeignKey(Song, on_delete=models.CASCADE)
 
 
 
