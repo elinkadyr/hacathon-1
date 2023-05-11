@@ -1,8 +1,9 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Genre, Artist, Song, Playlist
-from .helpers import send_spam
 
-from review.serializers import RatingSerializer
+from .helpers import send_spam
+from .models import Genre, Artist, Song, Playlist, Comment, Like, Favorite, Rating
+
+
 """СЕРИАЛИЗАТОР ДЛЯ ЖАНРОВ"""
 class GenreSerializer(ModelSerializer):
     class Meta:
@@ -19,7 +20,6 @@ class ArtistSerializer(ModelSerializer):
 
 """СЕРИАЛИЗАТОР ДЛЯ ПЕСЕН"""
 class SongSerializer(ModelSerializer):
-    ratings = RatingSerializer(many=True, read_only=True)
     class Meta:
         model = Song
         fields = ('id', 'title', 'artist', 'ratings')
@@ -29,9 +29,68 @@ class SongSerializer(ModelSerializer):
         send_spam(send_song)
         return send_song
 
+
 """СЕРИАЛИЗАТОР ДЛЯ ПЛЕЙЛИСТОВ"""
 class PLaylistSerializer(ModelSerializer):
     class Meta:
         model = Playlist
         fields = '__all__'
+
+
+"""СЕРИАЛИЗАТОР ДЛЯ КОММЕНТАРИЕВ"""
+class CommentSerializer(ModelSerializer):
+    class Meta:
+        model = Comment
+        exclude = ('user',)
+
+    def validate(self, attrs):
+        super().validate(attrs)
+        attrs["user"] = self.context["request"].user
+        return attrs
+
+
+"""СЕРИАЛИЗАТОР ДЛЯ ЛАЙКОВ"""
+class LikeSerializer(ModelSerializer):
+    class Meta:
+        model = Like
+        exclude = ('user',)
+
+    def validate(self, attrs):
+        super().validate(attrs)
+        attrs["user"] = self.context["request"].user
+        return attrs
+
+    def to_representation(self, instance: Like):
+        from music.serializers import SongSerializer
+
+        rep = super().to_representation(instance)
+        rep["song"] = SongSerializer(instance.song).data
+        return rep
+
+
+"""СЕРИАЛИЗАТОР ДЛЯ ИЗБРАННОГО"""
+class FavoriteSerializer(ModelSerializer):
+    class Meta:
+        model = Favorite
+        exclude = ('user',)
+
+    def validate(self, attrs):
+        super().validate(attrs)
+        attrs["user"] = self.context["request"].user
+        return attrs
+
+    def to_representation(self, instance: Favorite):
+        from music.serializers import SongSerializer
+
+        rep = super().to_representation(instance)
+        rep["favorite"] = SongSerializer(instance.song).data
+        return rep
+
+
+"""СЕРИАЛИЗАТОР ДЛЯ РЕЙТИНГА"""
+class RatingSerializer(ModelSerializer):
+    class Meta:
+        model = Rating
+        fields = ('id', 'song', 'likes')
+
 

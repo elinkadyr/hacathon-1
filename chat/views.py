@@ -1,6 +1,8 @@
-from django.shortcuts import render, redirect
-from .models import Room, Message
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import redirect, render
+
+from .models import Message, Room
+
 
 # Create your views here.
 def home(request):
